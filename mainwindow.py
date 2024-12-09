@@ -6,7 +6,9 @@ adds sliders for various parameters, and binds events for canvas zooming, slider
 """
 import tkinter as tk
 
+from draw_on_canvas import draw_squares
 from sliders import create_sliders
+from zoom import bind_canvas_zoom_events
 
 # Main application window
 # =======================
@@ -27,6 +29,10 @@ window.bind('<Control-q>', lambda event: (window.quit()))
 canvas_width, canvas_height = 500, 440  # canvas size determines the initial size of the window, which fits its content.
 canvas = tk.Canvas(window, bg="white", width=canvas_width, height=canvas_height)
 canvas.grid(row=0, column=0, columnspan=1, padx=0, pady=0, sticky="nsew")
+bind_canvas_zoom_events(canvas)
+
+# Demo of the zoom feature: draw squares on the canvas
+draw_squares(canvas, 8, 50)
 
 # Add a frame for the sliders below the canvas
 # ============================================
