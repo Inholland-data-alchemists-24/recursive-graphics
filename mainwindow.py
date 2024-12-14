@@ -12,6 +12,19 @@ from sliders import (
 )
 from zoom import bind_canvas_zoom_events
 
+
+def center_window_on_screen(window_: tk.Tk | tk.Toplevel) -> None:
+    window_.update_idletasks()
+    screen_width = window_.winfo_screenwidth()  # the width of the screen
+    screen_height = window_.winfo_screenheight()  # the height of the screen
+    width = window_.winfo_width()  # the width of the window
+    height = window_.winfo_height()  # the height of the window
+    # Calculate the center of the screen and position top-left corner of the window
+    x = (screen_width // 2) - (width // 2)  # position left-side of the window
+    y = (screen_height // 2) - (height // 2) - 16  # position top of the window adjusted for the height of the taskbar.
+    window_.geometry(f'{width}x{height}+{x}+{y}')
+
+
 # Main application window
 # =======================
 window = tk.Tk()
@@ -36,6 +49,8 @@ window.geometry("1200x720")
 # window.state("zoomed")
 # 2. fullscreen(without the top bar):
 # window.attributes("-fullscreen", True)
+
+center_window_on_screen(window)
 
 # Add a canvas for the fractal display
 # ====================================
@@ -113,6 +128,36 @@ def update_slider_frame():
 
 # Handle window resizing: bind the window configure event to the handler `on_window_config`.
 window.bind('<Configure>', on_window_config)
+
+
+def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
+    """
+    Show a congratulatory message window.
+
+    Returns:
+        tk.Toplevel: The congratulatory message window.
+    """
+    congrats_win = tk.Toplevel()
+    congrats_win.resizable(False, False)
+    congrats_label = tk.Label(congrats_win, text="Congratulations! \n\n "
+                                                 'You have matched all the parameters of fractal trees.')
+    congrats_label.pack(padx=23, pady=(20, 10))
+
+    exit_button = tk.Button(congrats_win, text="Exit")
+    exit_button.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(25, 15), pady=18)
+    # bind the exit button to close the window
+    exit_button.bind("<Button-1>", lambda event: window_.quit())
+
+    restart_button = tk.Button(congrats_win, text="Try Again")
+    restart_button.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(15, 25), pady=18)
+    # bind the restart button to restart the game
+    restart_button.bind("<Button-1>", lambda event: (congrats_win.destroy(), restart()))
+    restart_button.config(bg="lightblue")
+    restart_button.focus_set()
+
+    center_window_on_screen(congrats_win)
+    return congrats_win
+
 
 # Run the Tkinter event loop
 # ==========================
