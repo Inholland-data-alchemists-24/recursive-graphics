@@ -17,6 +17,11 @@ window.grid_columnconfigure(0, weight=1)  # Make all elements of the 0th column 
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(1, weight=0)
 
+# Keybindings for the window to toggle fullscreen, exit fullscreen and quit the application
+window.bind('<F11>', lambda event: (window.attributes("-fullscreen", True)))
+window.bind('<Escape>', lambda event: (window.attributes("-fullscreen", False)))
+window.bind('<Control-q>', lambda event: (window.quit()))
+
 # Add a canvas for the fractal display
 # ====================================
 canvas_width, canvas_height = 500, 440  # canvas size determines the initial size of the window, which fits its content.
