@@ -40,9 +40,18 @@ slider_frame = tk.Frame(window)
 slider_frame.grid(row=1, column=0, columnspan=1, padx=20, pady=(0, 6), sticky="ew")
 
 # Create sliders for the fractal parameters and place in the frame
-# length of each slider: (canvas' width - frame's x padding) // num of sliders in a row - slider's x padding
-# (500 - 2*20) // 2 - 10 = 220
-create_sliders(slider_frame, 5, 6)
+slider_data = [
+    ("Trunk's Length", 10, 200, 1),
+    ("Branch Splits", 2, 7, 1),
+    ("Length Ratio", 0.2, 1.2, 0.01),
+    ("Angle Between Branches", 0, 180, 1),
+    ("Iterations", 1, 9, 1),
+    ("Angle Offset", -45, 45, 1),
+    ("Trunk's Color", 0, 360, 1),
+    ("Leaf Color", 0, 360, 1)
+]
+# Enough to specify the number of columns for the sliders. This feature will help populating the sliders automatically.
+create_sliders(slider_frame, slider_data, 2, 5, 6)
 
 # Run the Tkinter event loop
 # ==========================
