@@ -1,20 +1,21 @@
 """
-Module for creating sliders in the GUI.
+Module for creating and updating sliders in the GUI.
 
-Contains functions for creating sliders given their parameters.
+WARNING: This module does not deal with the logic that the sliders control. It only deals with the sliders,
+their layout and its response to window resizing, taking a callable to update the sliders frame as an argument.
 
-A create_sliders function is provided to add sliders for controlling various parameters of the game.
-It adds each slider to the sliders frame provided as the argument to this function.
-It uses data for the sliders which needs to be provided as a parameter in a form of a collection of tuples,
-each containing data establishing the identity of each slider, such as what parameter in the app it controls,
-its label, range and resolution and an initial value.
+Contains functions for:
+ - creating sliders given their parameters, like parent frame, range and resolution of values.
+ - recalculating for optimal number of slider columns based on the window width and the number and size of sliders.
+ - repopulating the sliders in the frame after the number of columns has changed.
 
-The create_sliders function also binds each slider to an event and assigns the event handlers to each,
+The create_sliders function binds each slider to an event and assigns the event handlers to each,
 e.g. handlers that update the canvas with a fractal tree generated with a new parameter taken from the slider-its value.
 
 This module also defines the generator of the row and column pairs, which makes it automated
-to populate rows and columns in the grid layout of the sliders. Enough to specify the number of columns for the sliders.
-This may help populating the sliders automatically on each change to the window's size or the number of sliders.
+to populate rows and columns in the grid layout of the sliders. Enough to specify the number of columns for the sliders
+and the generator will yield each next row & column pair.
+This helps in populating the sliders automatically on each change to the window's size or the number of sliders.
 """
 from collections.abc import Collection
 from tkinter import Frame, Scale, HORIZONTAL
@@ -24,8 +25,16 @@ def create_sliders(
         parent_frame: Frame, sliders_init_data: Collection[tuple], num_columns: int, x_padding: int, y_padding: int
 ) -> list[Scale]:
     """
-    Create sliders for modifying various parameters of the fractal tree by the user.
-    Add them to the sliders frame in automatic way: each slider's position will
+    Create a set of sliders for controlling program parameters by the user.
+    The sliders are placed in the grid layout of the parent frame provided as the argument to this function.
+    Takes a collection of tuples,
+    each containing a set of predefined, individual slider data that is not shared between sliders. Other parameters
+    are shared between all sliders: number of columns (num_columns) is supposed to be precalculated depending on the
+    size of the parent frame, and passed as an argument.
+
+    It uses data for the sliders which needs to be provided as a parameter in a form of a collection of tuples,
+    each containing data establishing the identity of each slider, such as what parameter in the app it controls,
+    its label, range and resolution and an initial value.
 
     Parameters:
         parent_frame (Frame): The frame to which the sliders will be added.
@@ -37,6 +46,9 @@ def create_sliders(
         num_columns (int): The number of columns in the grid layout of the sliders frame.
         x_padding (int): The horizontal padding for each of the slider.
         y_padding (int): The vertical padding for each of the slider.
+
+    Returns:
+        list[Scale]: The list of sliders (as Tkinter Scale objects) created.
     """
     # The columns in the slider frame will expand equally
     for i in range(num_columns):
@@ -90,7 +102,7 @@ def create_slider(
 def column_sequence_generator(num_columns: int):
     """
     A generator that yields the next field in the grid layout in the form of tuple: (row, column).
-    The generator cycles through the columns from left to right, incrementing rows - top to bottom.
+    The generator cycles through the columns from left to right (0 to n), incrementing row number on each cycle.
     """
     row = 0
     while True:
