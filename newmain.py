@@ -12,6 +12,16 @@ def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     """
     congrats_win = tk.Toplevel()
     congrats_win.resizable(False, False)
+    
+    # Set the popup window as modal
+    congrats_win.grab_set()
+    
+    # Ensure the popup stays on top
+    congrats_win.transient(master=window_)
+    
+    # Bring the popup into focus
+    congrats_win.focus_set()
+    
     congrats_label = tk.Label(congrats_win, text="Congratulations! \n\n "
                                                 'You have matched all the parameters of fractal trees.')
     congrats_label.pack(padx=23, pady=(20, 10))
@@ -19,13 +29,19 @@ def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     exit_button = tk.Button(congrats_win, text="Exit")
     exit_button.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(25, 15), pady=18)
     # bind the exit button to close the window
-    exit_button.bind("<Button-1>", lambda event: window_.quit())
+    exit_button.bind("<Button-1>", lambda event: (congrats_win.destroy(), window_.quit()))
 
     restart_button = tk.Button(congrats_win, text="Try Again")
     restart_button.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(15, 25), pady=18)
     # bind the restart button to restart the game
     restart_button.bind("<Button-1>", lambda event: (congrats_win.destroy(), restart()))
     restart_button.config(bg="lightblue")
+
+    # Handle closing the popup window
+    congrats_win.protocol("WM_DELETE_WINDOW", lambda: (congrats_win.destroy(), window_.focus_set()))
+
+    return congrats_win
+
 
 def restart():
     import sys
@@ -133,11 +149,11 @@ rand_pars_list.append(c2)
 color_tuple = (hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1)))
 
     # draw a fractal canopy
-fractal_canopy(canvas, 250, 500,
+fractal_canopy(canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
-fractal_canopy(canvas, 750, 500,
+fractal_canopy(canvas, 850, 500,
                 n_iters=5, init_length=slider_var5.get(),
                 n_splits=slider_var3.get(), angle_delta=slider_var2.get(),
                 off_angle=slider_var1.get(), length_ratio=slider_var4.get(),
@@ -173,14 +189,15 @@ def redraw(self):
     diffl = int(diffl[7:-1])
     
     
-    if diffl >= 40:
+    if (diffl >= 95):
         show_congratulations(window, restart=restart)
+        
 
-    fractal_canopy(canvas, 250, 500,
+    fractal_canopy(canvas, 400, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
-    fractal_canopy(canvas, 750, 500,
+    fractal_canopy(canvas, 1000, 500,
                 n_iters=5, init_length=slider_var5.get(),
                 n_splits=slider_var3.get(), angle_delta=slider_var2.get(),
                 off_angle=slider_var1.get(), length_ratio=slider_var4.get(),
