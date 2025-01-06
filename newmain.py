@@ -1,6 +1,7 @@
 import tkinter as tk
 from fractal_funcs import fractal_canopy
 from zoom import bind_canvas_zoom_events
+import numpy as np
 import os, sys
 import colorsys
 
@@ -10,6 +11,11 @@ def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     Returns:
         tk.Toplevel: The congratulatory message window.
     """
+    global elapsed_time_label
+
+    #stop the timer
+    elapsed_time_label.after_cancel(elapsed_time_label.after_id)
+
     congrats_win = tk.Toplevel()
     congrats_win.resizable(False, False)
     
@@ -77,6 +83,27 @@ def center_window_on_screen(window_: tk.Tk | tk.Toplevel) -> None:
     y = (screen_height // 2) - (height // 2) - 16  # position top of the window adjusted for the height of the taskbar.
     window_.geometry(f'{width}x{height}+{x}+{y}')
 
+#Global timer variables
+start_time = None #To track the start time
+elapsed_time_label = None #Timer label to display elapsed time
+def update_timer():
+    """
+    Update the timer label with the elapsed time since the start of the game.
+    """
+    global start_time, elapsed_time_label
+
+    #calculate elapsed time
+    current_time = np.datetime64('now', 's')
+    elapsed_time=(current_time - start_time).astype(int)
+
+    #format the elapsed time as mm:ss
+    minutes, seconds = divmod(elapsed_time, 60)
+    elapsed_time_label.config(text=f"Time Elapsed: {minutes:02}:{seconds:02}")
+
+    # Schedule the next update
+    elapsed_time_label.after_id = elapsed_time_label.after(1000, update_timer)
+
+
 window = tk.Tk()
 window.title("Fractal Matching Game")
 window.grid_columnconfigure(0, weight=1)  # Make all elements of the 0th column of the main window expandable.
@@ -107,6 +134,16 @@ center_window_on_screen(window)
 canvas = tk.Canvas(window, bg="white")
 canvas.grid(row=0, column=0, columnspan=1, padx=0, pady=0, sticky="nsew")
 bind_canvas_zoom_events(canvas)
+
+# Create a frame for the sliders
+slider_frame = tk.Frame(window)
+slider_frame.grid(row=1, column=0, sticky="nsew")
+
+#Add a timer label
+start_time = np.datetime64('now', 's') #record the start time
+elapsed_time_label = tk.Label(slider_frame, text="Time Elapsed: 00:00", font=("Arial", 10), fg="gray")
+elapsed_time_label.grid(row=0, column=12, padx=(10, 0), pady=(0, 0), sticky="w")
+update_timer()  # Start the timer update loop
 
 slider_var1 = tk.DoubleVar()
 slider_var2 = tk.DoubleVar()
@@ -160,10 +197,6 @@ fractal_canopy(canvas, 850, 500,
                 wave_amp=0, width=20,
                 width_ratio=slider_var6.get(), color=(hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1))))
 
-
-# Create a frame for the sliders
-slider_frame = tk.Frame(window)
-slider_frame.grid(row=1, column=0, sticky="nsew")
 import math
 import numpy as np
 def minmax(val, mins, maxs):
