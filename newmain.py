@@ -237,7 +237,7 @@ def minmax(val, mins, maxs):
     return (val-mins)/(maxs-mins)
 ranges = [(-45, 45), (0, 180), (2, 8), (-0.5, 0.75), (100, 200), (0.5, 0.75), (0, 1), (0, 1)]
 
-def redraw(self):
+def redraw(*args):
     """
      Redraws the canvas with updated fractal parameters based on the slider values.
 
@@ -252,7 +252,7 @@ def redraw(self):
      Args:
          self: A reference to the canvas widget calling the redraw method.
      """
-    canvas.delete("all")
+    canvas.delete("tree")
     selected_pars = [slider_var1.get(), slider_var2.get(), slider_var3.get(),
                      slider_var4.get(), slider_var5.get(), slider_var6.get(),
                      slider_var7.get(), slider_var8.get()]
@@ -276,11 +276,11 @@ def redraw(self):
         show_congratulations(window, restart=restart)
         
 
-    fractal_canopy(canvas, 300, 500,
+    fractal_canopy('tree', canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
-    fractal_canopy(canvas, 850, 500,
+    fractal_canopy('tree', canvas, 850, 500,
                 n_iters=5, init_length=slider_var5.get(),
                 n_splits=slider_var3.get(), angle_delta=slider_var2.get(),
                 off_angle=slider_var1.get(), length_ratio=slider_var4.get(),
