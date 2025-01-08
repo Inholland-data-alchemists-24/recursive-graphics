@@ -317,4 +317,7 @@ for i, slider in enumerate(sliders):
     labels[i].grid(row=0, column=i)
     sliders[i].grid(row=1, column=i)
 
+button_summer = tk.Button(window, text="summer" , command= lambda: choose_season(canvas, 'summer'))
+button_summer.grid(row=2, column=0)
+
 window.mainloop()
