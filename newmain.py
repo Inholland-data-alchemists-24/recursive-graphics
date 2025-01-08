@@ -20,9 +20,6 @@ def choose_season(canvas, season):
     canvas.delete('season')
     season_images = {
         'summer' : tk.PhotoImage(file="summer.png").subsample(1),
-        'winter' : tk.PhotoImage(file='winter.png'),
-        'spring' : tk.PhotoImage(file='spring.png'),
-        'autumn' : tk.PhotoImage(file='autumn.png')
     }
     canvas.season_images = season_images
     canvas.create_image(599,250, image = season_images[season], tag = 'season')
@@ -221,11 +218,11 @@ rand_pars_list.append(c2)
 color_tuple = (hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1)))
 
     # draw a fractal canopy
-fractal_canopy(canvas, 300, 500,
+fractal_canopy('tree',canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
-fractal_canopy(canvas, 850, 500,
+fractal_canopy('tree',canvas, 850, 500,
                 n_iters=5, init_length=slider_var5.get(),
                 n_splits=slider_var3.get(), angle_delta=slider_var2.get(),
                 off_angle=slider_var1.get(), length_ratio=slider_var4.get(),
