@@ -10,6 +10,25 @@ import math
 import tkinter as tk
 import numpy as np
 
+def choose_season(canvas, season):
+    """
+    Change the season of the fractal trees on the canvas.
+    Args:
+        canvas (tk.Canvas): The canvas where the fractal trees are drawn.
+        season (str): The season to change to. One of 'summer', 'winter', 'spring', or 'autumn'.
+    """
+    canvas.delete('season')
+    season_images = {
+        'summer' : tk.PhotoImage(file="summer.png").subsample(1),
+        'winter' : tk.PhotoImage(file='winter.png'),
+        'spring' : tk.PhotoImage(file='spring.png'),
+        'autumn' : tk.PhotoImage(file='autumn.png')
+    }
+    canvas.season_images = season_images
+    canvas.create_image(599,250, image = season_images[season], tag = 'season')
+    redraw()
+
+
 def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     """
     Show a congratulatory message window.
