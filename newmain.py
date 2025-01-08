@@ -1,9 +1,14 @@
-import tkinter as tk
 from fractal_funcs import fractal_canopy
 from zoom import bind_canvas_zoom_events
-import numpy as np
-import os, sys
+
+import os
+import sys
 import colorsys
+import random
+import math
+
+import tkinter as tk
+import numpy as np
 
 def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     """
@@ -45,16 +50,14 @@ def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
 
     # Handle closing the popup window
     congrats_win.protocol("WM_DELETE_WINDOW", lambda: (congrats_win.destroy(), window_.focus_set()))
-
+    center_window_on_screen(congrats_win)
     return congrats_win
 
 
 def restart():
-    import sys
     print("argv was",sys.argv)
     print("sys.executable was", sys.executable)
     print("restart now")
-    import os
     os.execv(sys.executable, ['python'] + sys.argv)
     
 def hsv_to_hex(hsv):
@@ -73,6 +76,20 @@ def hsv_to_hex(hsv):
     return hex_color
 
 def center_window_on_screen(window_: tk.Tk | tk.Toplevel) -> None:
+    """
+    Centers the given `window_` (either a tk.Tk or tk.Toplevel instance) on the screen.
+
+    This function calculates the position to place the window in the center of the screen,
+    taking into account the screen dimensions and window's width and height.
+    Adjustments are also made for the taskbar height.
+
+    Args:
+        window_ (tk.Tk | tk.Toplevel): The window to be centered on the screen.
+
+    Returns:
+        None
+    """
+
     window_.update_idletasks()
     screen_width = window_.winfo_screenwidth()  # the width of the screen
     screen_height = window_.winfo_screenheight()  # the height of the screen
@@ -86,6 +103,7 @@ def center_window_on_screen(window_: tk.Tk | tk.Toplevel) -> None:
 #Global timer variables
 start_time = None #To track the start time
 elapsed_time_label = None #Timer label to display elapsed time
+
 def update_timer():
     """
     Update the timer label with the elapsed time since the start of the game.
@@ -102,7 +120,6 @@ def update_timer():
 
     # Schedule the next update
     elapsed_time_label.after_id = elapsed_time_label.after(1000, update_timer)
-
 
 window = tk.Tk()
 window.title("Fractal Matching Game")
@@ -129,8 +146,7 @@ window.geometry("1200x720")
 
 center_window_on_screen(window)
 
-    # Add a canvas for the fractal display
-    # ====================================
+ # Add a canvas for the fractal display
 canvas = tk.Canvas(window, bg="white")
 canvas.grid(row=0, column=0, columnspan=1, padx=0, pady=0, sticky="nsew")
 bind_canvas_zoom_events(canvas)
@@ -197,15 +213,30 @@ fractal_canopy(canvas, 850, 500,
                 wave_amp=0, width=20,
                 width_ratio=slider_var6.get(), color=(hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1))))
 
-import math
-import numpy as np
+
 def minmax(val, mins, maxs):
     return (val-mins)/(maxs-mins)
 ranges = [(-45, 45), (0, 180), (2, 8), (-0.5, 0.75), (100, 200), (0.5, 0.75), (0, 1), (0, 1)]
+
 def redraw(self):
-    
+    """
+     Redraws the canvas with updated fractal parameters based on the slider values.
+
+     This function clears the canvas, retrieves the current state of the sliders
+     controlling fractal parameters, computes their differences with the initial random
+     parameters, and calculates a "match percentage." If the user achieves at least a
+     95% match with the initial random parameters, a congratulatory message is shown.
+
+     The function also redraws the fractals on the canvas based on the
+     current slider values.
+
+     Args:
+         self: A reference to the canvas widget calling the redraw method.
+     """
     canvas.delete("all")
-    selected_pars = [slider_var1.get(), slider_var2.get(), slider_var3.get(), slider_var4.get(), slider_var5.get(), slider_var6.get(), slider_var7.get(), slider_var8.get()]
+    selected_pars = [slider_var1.get(), slider_var2.get(), slider_var3.get(),
+                     slider_var4.get(), slider_var5.get(), slider_var6.get(),
+                     slider_var7.get(), slider_var8.get()]
     
     diffs=[]
     for i in range(8):
@@ -226,11 +257,11 @@ def redraw(self):
         show_congratulations(window, restart=restart)
         
 
-    fractal_canopy(canvas, 400, 500,
+    fractal_canopy(canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
-    fractal_canopy(canvas, 1000, 500,
+    fractal_canopy(canvas, 850, 500,
                 n_iters=5, init_length=slider_var5.get(),
                 n_splits=slider_var3.get(), angle_delta=slider_var2.get(),
                 off_angle=slider_var1.get(), length_ratio=slider_var4.get(),
@@ -266,8 +297,5 @@ match_label.grid(row=0, column=9, rowspan=2, columnspan=3)
 for i, slider in enumerate(sliders):
     labels[i].grid(row=0, column=i)
     sliders[i].grid(row=1, column=i)
-
-
-
 
 window.mainloop()
