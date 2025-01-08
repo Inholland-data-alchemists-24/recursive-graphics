@@ -10,6 +10,7 @@ import math
 import tkinter as tk
 import numpy as np
 
+
 def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
     """
     Show a congratulatory message window.
@@ -23,17 +24,18 @@ def show_congratulations(window_: tk.Tk, restart: callable) -> tk.Toplevel:
 
     congrats_win = tk.Toplevel()
     congrats_win.resizable(False, False)
-    
+
     # Set the popup window as modal
     congrats_win.grab_set()
-    
+
     # Ensure the popup stays on top
     congrats_win.transient(master=window_)
-    
+
     # Bring the popup into focus
     congrats_win.focus_set()
-    
-    congrats_label = tk.Label(congrats_win, text="Congratulations! \n\n "
+
+    congrats_label = tk.Label(congrats_win,
+                              text="Congratulations! \n\n "
                                                 'You have matched all the parameters of fractal trees.')
     congrats_label.pack(padx=23, pady=(20, 10))
 
@@ -59,21 +61,23 @@ def restart():
     print("sys.executable was", sys.executable)
     print("restart now")
     os.execv(sys.executable, ['python'] + sys.argv)
-    
+
+
 def hsv_to_hex(hsv):
     h, s, v = hsv
-    
+
     # Convert HSV to RGB
     rgb = colorsys.hsv_to_rgb(h, s, v)
-    
+
     # Convert RGB to hexadecimal
     hex_color = '#{:02x}{:02x}{:02x}'.format(
         int(round(rgb[0] * 255)),
         int(round(rgb[1] * 255)),
         int(round(rgb[2] * 255))
     )
-    
+
     return hex_color
+
 
 def center_window_on_screen(window_: tk.Tk | tk.Toplevel) -> None:
     """
@@ -123,7 +127,8 @@ def update_timer():
 
 window = tk.Tk()
 window.title("Fractal Matching Game")
-window.grid_columnconfigure(0, weight=1)  # Make all elements of the 0th column of the main window expandable.
+# Make all elements of the 0th column of the main window expandable.
+window.grid_columnconfigure(0, weight=1)
 # Make the canvas' row expand to fill the window's height and resize with it, the sliders' row stays the same size.
 window.grid_rowconfigure(0, weight=1)
 window.grid_rowconfigure(1, weight=0)
@@ -134,19 +139,11 @@ window.bind('<Escape>', lambda event: (window.attributes("-fullscreen", False)))
 window.bind('<Control-q>', lambda event: (window.quit()))
 
 # Set the initial, non-zoomed size of the window:
-# Let the OS determine the initial size, or set it manually, e.g. 1200x720 pixels.
 window.geometry("1200x720")
-# to let the OS determine the initial size - comment the above line
-
-    # Initial fullscreen mode (to enable, uncomment one of the following):
-    # 1. fullscreen(with the top bar):
-    # window.state("zoomed")
-    # 2. fullscreen(without the top bar):
-    # window.attributes("-fullscreen", True)
 
 center_window_on_screen(window)
 
- # Add a canvas for the fractal display
+# Add a canvas for the fractal display
 canvas = tk.Canvas(window, bg="white")
 canvas.grid(row=0, column=0, columnspan=1, padx=0, pady=0, sticky="nsew")
 bind_canvas_zoom_events(canvas)
@@ -179,7 +176,10 @@ slider_var6.set(0.6)
 slider_var7.set(0.7)
 slider_var8.set(0.3)
 
-import random
+# Create a frame for the sliders
+slider_frame = tk.Frame(window)
+slider_frame.grid(row=1, column=0, sticky="nsew")
+
 def random_init():
     c1 = random.uniform(0, 1)
     c2 = random.uniform(0, 1)
@@ -198,10 +198,11 @@ rand_pars_list = list(rand_pars.values())[:-1]
 rand_pars_list.append(c1)
 rand_pars_list.append(c2)
 
-# Demo of the zoom feature: draw squares on the canvas
+# `color_tuple` generates two dynamic hexadecimal colors based on slider values (`slider_var7` and `slider_var8`),
+# representing the colors for the fractal's root and leaves.
 color_tuple = (hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1)))
 
-    # draw a fractal canopy
+# draw a fractal canopy
 fractal_canopy(canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
@@ -217,6 +218,7 @@ fractal_canopy(canvas, 850, 500,
 def minmax(val, mins, maxs):
     return (val-mins)/(maxs-mins)
 ranges = [(-45, 45), (0, 180), (2, 8), (-0.5, 0.75), (100, 200), (0.5, 0.75), (0, 1), (0, 1)]
+
 
 def redraw(self):
     """
@@ -234,10 +236,12 @@ def redraw(self):
          self: A reference to the canvas widget calling the redraw method.
      """
     canvas.delete("all")
+    
     selected_pars = [slider_var1.get(), slider_var2.get(), slider_var3.get(),
                      slider_var4.get(), slider_var5.get(), slider_var6.get(),
                      slider_var7.get(), slider_var8.get()]
     
+
     diffs=[]
     for i in range(8):
         min_ = ranges[i][0]
@@ -247,15 +251,12 @@ def redraw(self):
         diffs_mean = np.mean(diffs)
         diff_perc = int(100 - min(diffs_mean/0.5*100, 100))
         match_label.config(text=f"Match: {diff_perc}%")
-        
-        
+
     diffl = match_label.cget("text")
     diffl = int(diffl[7:-1])
-    
-    
+
     if (diffl >= 95):
         show_congratulations(window, restart=restart)
-        
 
     fractal_canopy(canvas, 300, 500,
                 n_iters=5,
