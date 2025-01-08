@@ -17,6 +17,7 @@ from numpy import radians as rad
 from helper_funcs import draw_sine_wave_segment, generate_gradient
 
 def fractal_canopy(
+    tag: str,
     canvas: tk.Canvas,
     x: float,
     y: float,
@@ -110,7 +111,7 @@ def fractal_canopy(
                                    init_length, wave_amp,
                                    width=width, fill=color)
         else:
-            canvas.create_line(x, y, end_x, end_y, width=width, fill=color)
+            canvas.create_line(x, y, end_x, end_y, width=width, fill=color, tags=tag)
 
 
     def get_color(
@@ -152,7 +153,7 @@ def fractal_canopy(
                  + np.sin(start_angle_rad)
                  * init_length)
         draw_branch(x, y, end_x, end_y, width, get_color(n_iters, color))
-        fractal_canopy(canvas, end_x, end_y,
+        fractal_canopy(tag, canvas, end_x, end_y,
                        n_iters=n_iters-1,
                        first_iter=False,
                        n_splits=n_splits,
@@ -179,7 +180,7 @@ def fractal_canopy(
                      + np.sin(angle_rad)
                      * init_length)
             draw_branch(x, y, end_x, end_y, width, get_color(n_iters, color))
-            fractal_canopy(canvas,
+            fractal_canopy(tag, canvas,
                            end_x,
                            end_y,
                            n_iters=n_iters-1,
