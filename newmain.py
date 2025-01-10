@@ -221,7 +221,7 @@ rand_pars_list.append(c2)
 color_tuple = (hsv_to_hex((slider_var7.get(), 1, 1)), hsv_to_hex((slider_var8.get(), 1, 1)))
 
     # draw a fractal canopy
-fractal_canopy('tree',canvas, 300, 500,
+fractal_canopy('random',canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
@@ -253,6 +253,7 @@ def redraw(*args):
          self: A reference to the canvas widget calling the redraw method.
      """
     canvas.delete("tree")
+    canvas.delete("random")
     selected_pars = [slider_var1.get(), slider_var2.get(), slider_var3.get(),
                      slider_var4.get(), slider_var5.get(), slider_var6.get(),
                      slider_var7.get(), slider_var8.get()]
@@ -276,7 +277,7 @@ def redraw(*args):
         show_congratulations(window, restart=restart)
         
 
-    fractal_canopy('tree', canvas, 300, 500,
+    fractal_canopy('random', canvas, 300, 500,
                 n_iters=5,
                 wave_amp=0, width=20, **rand_pars)
 
@@ -316,8 +317,21 @@ match_label.grid(row=0, column=9, rowspan=2, columnspan=3)
 for i, slider in enumerate(sliders):
     labels[i].grid(row=0, column=i)
     sliders[i].grid(row=1, column=i)
+# Create a frame for the season buttons
+season_frame = tk.Frame(window)
+season_frame.grid(row=2, column=0, pady=10, sticky="ew")
 
-button_summer = tk.Button(window, text="summer" , command= lambda: choose_season(canvas, 'summer'))
-button_summer.grid(row=2, column=0)
+# Add season buttons to the frame with spacing
+button_summer = tk.Button(season_frame, text="Summer", command=lambda: choose_season(canvas, 'summer'))
+button_summer.grid(row=0, column=0,padx=65, pady=5)  # Adjust spacing with padx/pady
+
+winter_button = tk.Button(season_frame, text='Winter', command=lambda: choose_season(canvas, 'winter'))
+winter_button.grid(row=0, column=1, padx=65, pady=5)
+
+spring_button = tk.Button(season_frame, text="Spring", command=lambda: choose_season(canvas, 'spring'))
+spring_button.grid(row=0, column=2, padx=65, pady=5)
+
+autumn_button = tk.Button(season_frame, text="Autumn", command=lambda: choose_season(canvas, 'autumn'))
+autumn_button.grid(row=0, column=3, padx=65, pady=5)
 
 window.mainloop()
