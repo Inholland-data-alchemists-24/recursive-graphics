@@ -1,5 +1,5 @@
 from fractal_funcs import fractal_canopy
-from zoom import bind_canvas_zoom_events
+from zoom import bind_canvas_zoom_events,reset_zoom
 
 import os
 import sys
@@ -13,19 +13,22 @@ import numpy as np
 def choose_season(canvas, season):
     """
     Change the season of the fractal trees on the canvas.
-    Args:
-        canvas (tk.Canvas): The canvas where the fractal trees are drawn.
-        season (str): The season to change to. One of 'summer', 'winter', 'spring', or 'autumn'.
     """
+    global season_changed
+    season_changed = True  # Set the flag when a season is chosen
+
+    # Reset zoom to default
+    reset_zoom(canvas)
+
     canvas.delete('season')
     season_images = {
-        'summer' : tk.PhotoImage(file="summer.png").subsample(3),
-        'winter' : tk.PhotoImage(file='winter.png').subsample(3),
-        'spring' : tk.PhotoImage(file='spring.png').subsample(3),
-        'autumn' : tk.PhotoImage(file='fall.png').subsample(3)
+        'summer': tk.PhotoImage(file="summer.png").subsample(3),
+        'winter': tk.PhotoImage(file='winter.png').subsample(3),
+        'spring': tk.PhotoImage(file='spring.png').subsample(3),
+        'autumn': tk.PhotoImage(file='fall.png').subsample(3)
     }
     canvas.season_images = season_images
-    canvas.create_image(canvas.winfo_width() / 2,(canvas.winfo_height() / 2) - 100, image = season_images[season], tag = 'season')
+    canvas.create_image(canvas.winfo_width() / 2, (canvas.winfo_height() / 2) - 100, image=season_images[season], tag='season')
     redraw()
 
 
