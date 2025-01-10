@@ -19,10 +19,13 @@ def choose_season(canvas, season):
     """
     canvas.delete('season')
     season_images = {
-        'summer' : tk.PhotoImage(file="summer.png").subsample(1),
+        'summer' : tk.PhotoImage(file="summer.png").subsample(3),
+        'winter' : tk.PhotoImage(file='winter.png').subsample(3),
+        'spring' : tk.PhotoImage(file='spring.png').subsample(3),
+        'autumn' : tk.PhotoImage(file='fall.png').subsample(3)
     }
     canvas.season_images = season_images
-    canvas.create_image(599,250, image = season_images[season], tag = 'season')
+    canvas.create_image(canvas.winfo_width() / 2,(canvas.winfo_height() / 2) - 100, image = season_images[season], tag = 'season')
     redraw()
 
 
