@@ -32,7 +32,7 @@ from tkinter import messagebox
 
 # Global variables
 zoom_count = 0
-MAX_ZOOM = 5
+MAX_ZOOM = 7
 season_changed = False  # New global flag to track if season was changed
 
 def start_pan(event: tk.Event):
@@ -67,10 +67,10 @@ def zoom(event: tk.Event):
 
     # Check if zoom limit is reached
     if zoom_count >= MAX_ZOOM and event.delta > 0:
-        messagebox.showwarning("Zoom Limit Reached", "You can't zoom in more than 5 times.")
+        messagebox.showwarning("Zoom Limit Reached", "You can't zoom in more than 7 times.")
         return
     elif zoom_count <= -MAX_ZOOM and event.delta < 0:
-        messagebox.showwarning("Zoom Limit Reached", "You can't zoom out more than 5 times.")
+        messagebox.showwarning("Zoom Limit Reached", "You can't zoom out more than 7 times.")
         return
 
     # Zoom in or out
